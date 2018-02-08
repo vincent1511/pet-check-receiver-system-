@@ -5,6 +5,7 @@ import RPi.GPIO as GPIO
 import time
 import atexit
 import redis
+DEL_TIME = 0.5
 r = redis.Redis(host='localhost',port=6379,db=0)
 atexit.register(GPIO.cleanup)
 
@@ -18,34 +19,42 @@ y = float(r.get('level'))
 def go_fun():
     p.start(0)
     global x 
-    x = x+0.1
+    x = x+0.5
     r.set('vertical',x)
     print x
     p.ChangeDutyCycle(x) #设置转动角度
+    time.sleep(DEL_TIME)
+    p.ChangeDutyCycle(0)
 def back_fun():
     p.start(0)
     global x
     if x > 2.5:
-        x = x-0.1
+        x = x-0.5
         r.set('vertical',x)
     print x
     p.ChangeDutyCycle(x) #设置转动角度
+    time.sleep(DEL_TIME)
+    p.ChangeDutyCycle(0)
 def right_fun():
     level.start(0)
     global y 
-    y = y+0.1
+    y = y+0.5
     r.set('level',y)
     print y
     level.ChangeDutyCycle(y) #设置转动角度
+    time.sleep(DEL_TIME)
+    level.ChangeDutyCycle(0)
 def left_fun():
     level.start(0)
     global y
     if y>2.5:
-        y = y-0.1
+        y = y-0.5
         r.set('level',y)
     print y
     #time.sleep(2)
     level.ChangeDutyCycle(y) #设置转动角度
+    time.sleep(DEL_TIME)
+    level.ChangeDutyCycle(0)
 app = Flask(__name__)
 
  
